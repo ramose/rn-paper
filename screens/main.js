@@ -2,14 +2,18 @@ import React, {useState} from 'react';
 import {BottomNavigation, Text, Button} from 'react-native-paper';
 import {View} from 'react-native';
 import HomeScreen from './stacks/home/homeStack';
+import ProfileStackScreen from './stacks/profile/profileStack';
+import HomeStackScreen from './stacks/home/homeStack';
+import HomeContentScreen from './stacks/home/homeContent';
+
 
 // const MusicRoute = (props) => <HomeScreen2 nav={props.navigation}/>;
 
-const AlbumsRoute = () => <Text>Albums</Text>;
+const AlbumsRoute = (navigation) => <Text>Albums</Text>;
 
 const RecentsRoute = () => <Text>Recents</Text>;
 
-const MainScreen = props => {
+const MainScreen = (props) => {
   const [index, setIndex] = useState(0);
   const [routes] = useState([
     {key: 'home', title: 'Home', icon: 'home'},
@@ -19,10 +23,10 @@ const MainScreen = props => {
   ]);
 
   const renderScene = BottomNavigation.SceneMap({
-    home: HomeScreen,
+    home: HomeContentScreen,
     jobs: AlbumsRoute,
     saldo: RecentsRoute,
-    profile: RecentsRoute,
+    profile: ProfileStackScreen,
   });
 
   return (

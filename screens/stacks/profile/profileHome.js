@@ -10,14 +10,14 @@ import {
     
 } from 'react-native-paper'
 
-const HomeContentScreen = () => {
+const ProfileHomeScreen = ({navigation}) => {
 
-    const navigation = useNavigation();
+    // there is 'navigation' declared in HomeScreen
 
     return(
         <View style={styles.root}>
             <Text>Content...</Text>
-            <Button mode="contained" onPress={()=>navigation.navigate("Detail")}>See Detail</Button>
+            <Button mode="contained" onPress={()=>navigation.navigate("Detail")}>Tambah Mobil</Button>
         </View>
     )
 }
@@ -30,4 +30,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default HomeContentScreen
+export default ProfileHomeScreen
