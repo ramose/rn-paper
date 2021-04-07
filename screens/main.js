@@ -12,15 +12,17 @@ const RecentsRoute = () => <Text>Recents</Text>;
 const MainScreen = props => {
   const [index, setIndex] = useState(0);
   const [routes] = useState([
-    {key: 'music', title: 'Music', icon: 'camera'},
-    {key: 'albums', title: 'Albums', icon: 'album'},
-    {key: 'recents', title: 'Recents', icon: 'history'},
+    {key: 'home', title: 'Home', icon: 'home'},
+    {key: 'jobs', title: 'Jobs', icon: 'check'},
+    {key: 'saldo', title: 'Saldo', icon: 'clipboard-list-outline'},
+    {key: 'profile', title: 'Profil', icon: 'account'},
   ]);
 
   const renderScene = BottomNavigation.SceneMap({
-    music: HomeScreen,
-    albums: AlbumsRoute,
-    recents: RecentsRoute,
+    home: HomeScreen,
+    jobs: AlbumsRoute,
+    saldo: RecentsRoute,
+    profile: RecentsRoute,
   });
 
   return (

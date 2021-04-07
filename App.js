@@ -6,7 +6,6 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {View} from 'react-native';
 import MainScreen from './screens/main';
 import DetailScreen from './screens/tabs/detail';
-import Main2 from './screens/main2';
 
 const Stack = createStackNavigator();
 
