@@ -5,18 +5,25 @@ import {
   Text,
   StyleSheet,
   Dimensions,
-  Button,
+  //   Button,
   TouchableOpacity,
   Animated,
+  FlatList,
+  ScrollView,
 } from 'react-native';
 // import LinearGradient from 'react-native-linear-gradient';
 import {useForm, Controller} from 'react-hook-form';
-import {TextInput} from 'react-native-paper';
+import {TextInput, Button, Divider, List} from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
 
 const ProfileHomeScreen = ({navigation}) => {
-    const { control, handleSubmit, formState: { errors } } = useForm();
-  
-    const onSubmit = data => console.log(data);
+  const {
+    control,
+    handleSubmit,
+    formState: {errors},
+  } = useForm();
+
+  const onSubmit = data => console.log(data);
 
   const moveAnim = useRef(new Animated.Value(400)).current;
 
@@ -28,29 +35,34 @@ const ProfileHomeScreen = ({navigation}) => {
     }).start();
   };
 
+  const user = {'name':'John Doe', 'id':'45', 'email':'jhondoe@email.com', 'pin':'767676'}
+
   useEffect(() => {
     startAnim();
   });
 
-//   onChange = ()
+  //   onChange = ()
 
   return (
-    <View>
-      <View>
-        <Text style={{margin: 20, fontSize: 16}}>
-          Already have an account? Sign In
-        </Text>
+    <ScrollView keyboardShouldPersistTaps="handled">
+      <View style={{padding: 23}}>
+        <Text style={styles.title}>Profil</Text>
+
+        <Image
+          style={styles.image}
+          source={require('../../../assets/images/user.png')}
+        />
 
         <View style={styles.container}>
           <Controller
             control={control}
-            render={({ field: {onChange, onBlur, value}}) => (
+            render={({field: {onChange, onBlur, value}}) => (
               <TextInput
-                label="username"
+                label="Nama"
                 style={styles.input}
                 onBlur={onBlur}
                 onChangeText={value => onChange(value)}
-                value={value}
+                value={user.name}
               />
             )}
             name="username"
@@ -62,48 +74,84 @@ const ProfileHomeScreen = ({navigation}) => {
 
           <Controller
             control={control}
-            render={({field:{onChange, onBlur, value}}) => (
+            render={({field: {onChange, onBlur, value}}) => (
               <TextInput
-                label="password"
+                label="Driver ID"
                 style={styles.input}
                 onBlur={onBlur}
                 onChangeText={value => onChange(value)}
-                value={value}
+                value={user.id}
+              />
+            )}
+            name="id"
+            rules={{required: true}}
+            defaultValue=""
+          />
+
+          <Controller
+            control={control}
+            render={({field: {onChange, onBlur, value}}) => (
+              <TextInput
+                label="Email"
+                style={styles.input}
+                onBlur={onBlur}
+                onChangeText={value => onChange(value)}
+                value={user.email}
+              />
+            )}
+            name="email"
+            rules={{required: true}}
+            defaultValue=""
+          />
+
+          <Controller
+            control={control}
+            render={({field: {onChange, onBlur, value}}) => (
+              <TextInput
+                label="Kata Sandi / PIN"
+                style={styles.input}
+                onBlur={onBlur}
+                onChangeText={value => onChange(value)}
+                value={user.pin}
               />
             )}
             name="password"
+            rules={{required: true}}
             defaultValue=""
           />
 
           {/* onPress={handleSubmit(onSubmit)} */}
-          <Button title="Submit" onPress={handleSubmit(onSubmit)} />
+          <Button onPress={handleSubmit(onSubmit)} mode="contained">
+            Submit
+          </Button>
 
-          {/* <Text style={{margin: 20, fontSize: 16}}>Or sign up with</Text> */}
+          {/* Divider */}
+          <Divider style={{marginTop: 30}} />
 
-          {/* <View style={{flexDirection: 'row'}}>
-              <Image
-                source={require('../assets/Icon-ionic-logo-google.png')}
-                style={{width: 20, height: 20}}
-              />
-              <Image
-                source={require('../assets/Icon-metro-facebook.png')}
-                style={{width: 20, height: 20, marginLeft: 10}}
-              />
-              <Image
-                source={require('../assets/Icon-material-email.png')}
-                style={{width: 20, height: 20, marginLeft: 10}}
-              />
-            </View> */}
+          {/* Menu Daftar Mobil */}
+          <View style={{marginTop: 20}}>
+            <List.Item
+              title="Daftar Mobil"
+              left={props => <List.Icon {...props} icon="car" />}
+              onPress={()=>{
+                  console.log("daftar mobil...mnA")
+                  navigation.navigate('CarList')
+              }}
+            />
+          </View>
+          {/* <View style={{alignItems:'flex-start'}}>
+            <Button style={{paddingLeft:-10}}>Daftar Mobil</Button>
+          </View> */}
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     // flex: 1,
-    alignItems: 'center',
+    // alignContent:'flex-start'
   },
   linearGradient: {
     flex: 1,
@@ -125,31 +173,28 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: Dimensions.get('window').width * 0.7,
   },
-  imgAngel: {
-    position: 'absolute',
-    width: 300,
-    right: 0 - Dimensions.get('window').width / 2 + 150,
-    top: 0,
-    zIndex: 1,
-  },
-  imgEvil: {
-    position: 'absolute',
-    width: 480,
-    left: Dimensions.get('window').width / 2 - 300,
-    top: -100,
-    zIndex: 0,
+  image: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    alignSelf: 'center',
+    marginBottom: 20,
   },
   input: {
-    padding: 5,
-    borderColor: 'gray',
+    padding: 0,
+    // borderColor: 'gray',
     // borderWidth: 1,
     borderRadius: 5,
-    width: Dimensions.get('window').width * 0.7,
+    // width: Dimensions.get('window').width * 0.7,
     marginBottom: 10,
-    fontSize: 16,
-    backgroundColor: '#f3f3f3',
+    // fontSize: 16,
+    // backgroundColor: '#f3f3f3',
+  },
+  title: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    marginBottom: 40,
   },
 });
 
-
-export default ProfileHomeScreen
+export default ProfileHomeScreen;
