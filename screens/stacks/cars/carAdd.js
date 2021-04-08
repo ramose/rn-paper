@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useState, useRef} from 'react';
 import {
   View,
   Image,
@@ -15,9 +15,11 @@ import {
 import {useForm, Controller} from 'react-hook-form';
 import {TextInput, Button, Divider, List, Appbar} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
+import {launchCamera} from 'react-native-image-picker';
 
 const CarAddScreen = ({navigation}) => {
-  
+  const [camResponse, setCamResponse] = useState(null);
+
   const {
     control,
     handleSubmit,
@@ -43,11 +45,21 @@ const CarAddScreen = ({navigation}) => {
     pin: '767676',
   };
 
-  useEffect(() => {
-    startAnim();
-  });
-
-  //   onChange = ()
+  function showCamera() {
+    launchCamera(
+      {
+        mediaType: 'photo',
+        maxWidth: 450,
+        quality: 0.25,
+        cameraType: 'back',
+        saveToPhotos: false,
+      },
+      response => {
+        setCamResponse(response);
+        console.log(response.uri);
+      },
+    );
+  }
 
   return (
     <View style={styles.root}>
@@ -65,10 +77,21 @@ const CarAddScreen = ({navigation}) => {
 
       <ScrollView keyboardShouldPersistTaps="handled">
         <View style={{padding: 23}}>
-          <Image
-            style={styles.image}
-            source={require('../../../assets/images/user.png')}
-          />
+          {/** Image */}
+          <TouchableOpacity onPress={()=>showCamera()}>
+            {camResponse === null && (
+              <Image
+                style={styles.image}
+                source={require('../../../assets/images/user.png')}
+              />
+            )}
+
+            {camResponse && (
+              <Image style={styles.image} source={{uri: camResponse.uri}} />
+            )}
+          </TouchableOpacity>
+
+          {/** Form */}
 
           <View style={styles.container}>
             <Controller

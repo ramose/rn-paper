@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   Image,
@@ -8,51 +8,77 @@ import {
   //   Button,
   TouchableOpacity,
   Animated,
-  FlatList,
   ScrollView,
+  Pressable,
 } from 'react-native';
-// import LinearGradient from 'react-native-linear-gradient';
 import {useForm, Controller} from 'react-hook-form';
 import {TextInput, Button, Divider, List} from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
 const ProfileHomeScreen = ({navigation}) => {
+  const [camResponse, setCamResponse] = useState(null);
+  const [username, setUsername] = useState('Jhon Doe');
+  const [userEmail, setUserEmail] = useState('jhondoe@email.com');
+  const [userId, setUserId] = useState('12');
+  const [userPin, setUserPin] = useState('123456');
+
+  // Camera options
+
+  function showCamera() {
+    launchCamera(
+      {
+        mediaType: 'photo',
+        maxWidth: 450,
+        quality: 0.25,
+        cameraType: 'back',
+        saveToPhotos: false,
+      },
+      response => {
+        if (response.uri === undefined) {
+        } else {
+          setCamResponse(response);
+        }
+
+        console.log(response.uri);
+      },
+    );
+  }
+
   const {
     control,
     handleSubmit,
     formState: {errors},
   } = useForm();
 
-  const onSubmit = data => console.log(data);
-
-  const moveAnim = useRef(new Animated.Value(400)).current;
-
-  const startAnim = () => {
-    Animated.timing(moveAnim, {
-      toValue: 0,
-      duration: 1000,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const user = {'name':'John Doe', 'id':'45', 'email':'jhondoe@email.com', 'pin':'767676'}
-
-  useEffect(() => {
-    startAnim();
-  });
-
-  //   onChange = ()
+  function onSubmit(data) {
+    console.log('submit:', data);
+  }
 
   return (
     <ScrollView keyboardShouldPersistTaps="handled">
-      <View style={{padding: 23}}>
+      <View style={{padding: 18, flex: 1}}>
         <Text style={styles.title}>Profil</Text>
 
-        <Image
-          style={styles.image}
-          source={require('../../../assets/images/user.png')}
-        />
+        {/** Image */}
 
+        <Pressable onPress={() => showCamera()} style={styles.image}>
+          {camResponse === null && (
+            <Image
+              style={styles.image}
+              source={require('../../../assets/images/user.png')}
+            />
+          )}
+
+          {camResponse && (
+            <Image style={styles.image} source={{uri: camResponse.uri}} />
+          )}
+        </Pressable>
+
+        {/** Form */}
+
+        {errors.username && (
+          <Text style={{color: 'red'}}>This is required.</Text>
+        )}
         <View style={styles.container}>
           <Controller
             control={control}
@@ -61,17 +87,19 @@ const ProfileHomeScreen = ({navigation}) => {
                 label="Nama"
                 style={styles.input}
                 onBlur={onBlur}
-                onChangeText={value => onChange(value)}
-                value={user.name}
+                onChangeText={value => {
+                  onChange(value);
+                }}
+                value={value}
+                mode="outlined"
               />
             )}
             name="username"
             rules={{required: true}}
-            defaultValue=""
+            defaultValue={username}
           />
-          {/* {errors.username && <Text>This is required.</Text>} */}
-          {/* {errors.username} */}
 
+          {errors.id && <Text style={{color: 'red'}}>This is required.</Text>}
           <Controller
             control={control}
             render={({field: {onChange, onBlur, value}}) => (
@@ -79,15 +107,21 @@ const ProfileHomeScreen = ({navigation}) => {
                 label="Driver ID"
                 style={styles.input}
                 onBlur={onBlur}
-                onChangeText={value => onChange(value)}
-                value={user.id}
+                onChangeText={value => {
+                  onChange(value);
+                }}
+                value={value}
+                mode="outlined"
               />
             )}
             name="id"
             rules={{required: true}}
-            defaultValue=""
+            defaultValue={userId}
           />
 
+          {errors.email && (
+            <Text style={{color: 'red'}}>This is required.</Text>
+          )}
           <Controller
             control={control}
             render={({field: {onChange, onBlur, value}}) => (
@@ -95,15 +129,20 @@ const ProfileHomeScreen = ({navigation}) => {
                 label="Email"
                 style={styles.input}
                 onBlur={onBlur}
-                onChangeText={value => onChange(value)}
-                value={user.email}
+                onChangeText={value => {
+                  onChange(value);
+                  setUserEmail(value);
+                }}
+                value={value}
+                mode="outlined"
               />
             )}
             name="email"
             rules={{required: true}}
-            defaultValue=""
+            defaultValue={userEmail}
           />
 
+          {errors.pin && <Text style={{color: 'red'}}>This is required.</Text>}
           <Controller
             control={control}
             render={({field: {onChange, onBlur, value}}) => (
@@ -111,13 +150,17 @@ const ProfileHomeScreen = ({navigation}) => {
                 label="Kata Sandi / PIN"
                 style={styles.input}
                 onBlur={onBlur}
-                onChangeText={value => onChange(value)}
-                value={user.pin}
+                onChangeText={value => {
+                  onChange(value);
+                  setUserPin(value);
+                }}
+                value={userPin}
+                mode="outlined"
               />
             )}
-            name="password"
+            name="pin"
             rules={{required: true}}
-            defaultValue=""
+            defaultValue={userPin}
           />
 
           {/* onPress={handleSubmit(onSubmit)} */}
@@ -133,9 +176,9 @@ const ProfileHomeScreen = ({navigation}) => {
             <List.Item
               title="Daftar Mobil"
               left={props => <List.Icon {...props} icon="car" />}
-              onPress={()=>{
-                  console.log("daftar mobil...mnA")
-                  navigation.navigate('CarList')
+              onPress={() => {
+                console.log('daftar mobil...mnA');
+                navigation.navigate('CarList');
               }}
             />
           </View>
