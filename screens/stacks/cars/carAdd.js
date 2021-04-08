@@ -16,8 +16,8 @@ import {useForm, Controller} from 'react-hook-form';
 import {TextInput, Button, Divider, List, Appbar} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 
-const CarDetailScreen = ({route, navigation}) => {
-  const {item} = route.params;
+const CarAddScreen = ({navigation}) => {
+  
   const {
     control,
     handleSubmit,
@@ -54,7 +54,7 @@ const CarDetailScreen = ({route, navigation}) => {
       <View>
         <Appbar>
           <Appbar.BackAction onPress={() => navigation.pop()} />
-          <Text style={{color: 'white'}}>Detail Mobil</Text>
+          <Text style={{color: 'white'}}>Tambah Mobil</Text>
           <View style={{flex: 1}} />
           <Appbar.Action
             icon="check"
@@ -79,7 +79,7 @@ const CarDetailScreen = ({route, navigation}) => {
                   style={styles.input}
                   onBlur={onBlur}
                   onChangeText={value => onChange(value)}
-                  value={item.brand}
+                  value={value}
                 />
               )}
               name="brand"
@@ -97,7 +97,7 @@ const CarDetailScreen = ({route, navigation}) => {
                   style={styles.input}
                   onBlur={onBlur}
                   onChangeText={value => onChange(value)}
-                  value={'' + item.year}
+                  value={value}
                 />
               )}
               name="year"
@@ -113,7 +113,7 @@ const CarDetailScreen = ({route, navigation}) => {
                   style={styles.input}
                   onBlur={onBlur}
                   onChangeText={value => onChange(value)}
-                  value={'' + item.cap}
+                  value={value}
                 />
               )}
               name="cap"
@@ -129,7 +129,7 @@ const CarDetailScreen = ({route, navigation}) => {
                   style={styles.input}
                   onBlur={onBlur}
                   onChangeText={value => onChange(value)}
-                  value={'' + item.cyl}
+                  value={value}
                 />
               )}
               name="cyl"
@@ -145,7 +145,7 @@ const CarDetailScreen = ({route, navigation}) => {
                   style={styles.input}
                   onBlur={onBlur}
                   onChangeText={value => onChange(value)}
-                  value={'' + item.type}
+                  value={value}
                 />
               )}
               name="type"
@@ -161,7 +161,7 @@ const CarDetailScreen = ({route, navigation}) => {
                   style={styles.input}
                   onBlur={onBlur}
                   onChangeText={value => onChange(value)}
-                  value={'' + item.name}
+                  value={value}
                 />
               )}
               name="name"
@@ -177,7 +177,7 @@ const CarDetailScreen = ({route, navigation}) => {
                   style={styles.input}
                   onBlur={onBlur}
                   onChangeText={value => onChange(value)}
-                  value={'' + item.trans}
+                  value={value}
                 />
               )}
               name="trans"
@@ -193,7 +193,7 @@ const CarDetailScreen = ({route, navigation}) => {
                   style={styles.input}
                   onBlur={onBlur}
                   onChangeText={value => onChange(value)}
-                  value={'' + item.ktp}
+                  value={value}
                 />
               )}
               name="ktp"
@@ -271,4 +271,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CarDetailScreen;
+export default CarAddScreen;

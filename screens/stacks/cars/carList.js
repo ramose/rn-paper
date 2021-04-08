@@ -39,7 +39,7 @@ const CarList = ({navigation}) => {
         <View style={{flex: 1}} />
         <Appbar.Action
           icon="plus"
-          onPress={() => console.log('Pressed mail')}
+          onPress={() => navigation.navigate('CarAdd')}
         />
       </Appbar>
       <FlatList
