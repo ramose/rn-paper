@@ -9,13 +9,16 @@ import DetailScreen from './screens/tabs/detail';
 import CarList from './screens/stacks/cars/carList';
 import CarDetailScreen from './screens/stacks/cars/carDetail';
 import CarAddScreen from './screens/stacks/cars/carAdd';
+import LoginScreen from './screens/stacks/auth/login';
+import RegisterScreen from './screens/stacks/auth/register';
+import ForgetScreen from './screens/stacks/auth/forget';
 
 const Stack = createStackNavigator();
 
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Main"
+      <Stack.Navigator initialRouteName="Login"
       screenOptions={{
         headerShown:false,
         headerStyle:{
@@ -33,9 +36,12 @@ const App = () => {
         <Stack.Screen name="CarList" component={CarList} />
         <Stack.Screen name="CarDetail" component={CarDetailScreen} />
         <Stack.Screen name="CarAdd" component={CarAddScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Register" component={RegisterScreen} />
+        <Stack.Screen name="ForgetPassword" component={ForgetScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
 
-export default App;
+export default App
