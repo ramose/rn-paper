@@ -55,139 +55,148 @@ const ProfileHomeScreen = ({navigation}) => {
   }
 
   return (
-    <ScrollView keyboardShouldPersistTaps="handled">
-      <View style={{padding: 18, flex: 1}}>
-        <Text style={styles.title}>Profil</Text>
+    <View style={{paddingTop: 10, paddingLeft:10, paddingRight:10, flex: 1}}>
+      <Text style={styles.title}>Profil</Text>
+      <ScrollView keyboardShouldPersistTaps="handled">
+        <View>
+          {/** Image */}
 
-        {/** Image */}
-
-        <Pressable onPress={() => showCamera()} style={styles.image}>
-          {camResponse === null && (
-            <Image
-              style={styles.image}
-              source={require('../../../assets/images/user.png')}
-            />
-          )}
-
-          {camResponse && (
-            <Image style={styles.image} source={{uri: camResponse.uri}} />
-          )}
-        </Pressable>
-
-        {/** Form */}
-
-        {errors.username && (
-          <Text style={{color: 'red'}}>This is required.</Text>
-        )}
-        <View style={styles.container}>
-          <Controller
-            control={control}
-            render={({field: {onChange, onBlur, value}}) => (
-              <TextInput
-                label="Nama"
-                style={styles.input}
-                onBlur={onBlur}
-                onChangeText={value => {
-                  onChange(value);
-                }}
-                value={value}
-                mode="outlined"
+          <Pressable onPress={() => showCamera()} style={styles.image}>
+            {camResponse === null && (
+              <Image
+                style={styles.image}
+                source={require('../../../assets/images/user.png')}
               />
             )}
-            name="username"
-            rules={{required: true}}
-            defaultValue={username}
-          />
 
-          {errors.id && <Text style={{color: 'red'}}>This is required.</Text>}
-          <Controller
-            control={control}
-            render={({field: {onChange, onBlur, value}}) => (
-              <TextInput
-                label="Driver ID"
-                style={styles.input}
-                onBlur={onBlur}
-                onChangeText={value => {
-                  onChange(value);
-                }}
-                value={value}
-                mode="outlined"
-              />
+            {camResponse && (
+              <Image style={styles.image} source={{uri: camResponse.uri}} />
             )}
-            name="id"
-            rules={{required: true}}
-            defaultValue={userId}
-          />
+          </Pressable>
 
-          {errors.email && (
+          {/** Form */}
+
+          {errors.username && (
             <Text style={{color: 'red'}}>This is required.</Text>
           )}
-          <Controller
-            control={control}
-            render={({field: {onChange, onBlur, value}}) => (
-              <TextInput
-                label="Email"
-                style={styles.input}
-                onBlur={onBlur}
-                onChangeText={value => {
-                  onChange(value);
-                  setUserEmail(value);
-                }}
-                value={value}
-                mode="outlined"
-              />
-            )}
-            name="email"
-            rules={{required: true}}
-            defaultValue={userEmail}
-          />
-
-          {errors.pin && <Text style={{color: 'red'}}>This is required.</Text>}
-          <Controller
-            control={control}
-            render={({field: {onChange, onBlur, value}}) => (
-              <TextInput
-                label="Kata Sandi / PIN"
-                style={styles.input}
-                onBlur={onBlur}
-                onChangeText={value => {
-                  onChange(value);
-                  setUserPin(value);
-                }}
-                value={userPin}
-                mode="outlined"
-              />
-            )}
-            name="pin"
-            rules={{required: true}}
-            defaultValue={userPin}
-          />
-
-          {/* onPress={handleSubmit(onSubmit)} */}
-          <Button onPress={handleSubmit(onSubmit)} mode="contained">
-            Submit
-          </Button>
-
-          {/* Divider */}
-          <Divider style={{marginTop: 30}} />
-
-          {/* Menu Daftar Mobil */}
-          <View style={{marginTop: 20}}>
-            <List.Item
-              title="Daftar Mobil"
-              left={props => <List.Icon {...props} icon="car" />}
-              onPress={() => {
-                console.log('daftar mobil...mnA');
-                navigation.navigate('CarList');
-              }}
+          <View style={styles.container}>
+            <Controller
+              control={control}
+              render={({field: {onChange, onBlur, value}}) => (
+                <TextInput
+                  label="Nama"
+                  style={styles.input}
+                  onBlur={onBlur}
+                  onChangeText={value => {
+                    onChange(value);
+                  }}
+                  value={value}
+                  mode="outlined"
+                />
+              )}
+              name="username"
+              rules={{required: true}}
+              defaultValue={username}
             />
-          </View>
-          {/* <View style={{alignItems:'flex-start'}}>
+
+            {errors.id && <Text style={{color: 'red'}}>This is required.</Text>}
+            <Controller
+              control={control}
+              render={({field: {onChange, onBlur, value}}) => (
+                <TextInput
+                  label="Driver ID"
+                  style={styles.input}
+                  onBlur={onBlur}
+                  onChangeText={value => {
+                    onChange(value);
+                  }}
+                  value={value}
+                  mode="outlined"
+                />
+              )}
+              name="id"
+              rules={{required: true}}
+              defaultValue={userId}
+            />
+
+            {errors.email && (
+              <Text style={{color: 'red'}}>This is required.</Text>
+            )}
+            <Controller
+              control={control}
+              render={({field: {onChange, onBlur, value}}) => (
+                <TextInput
+                  label="Email"
+                  style={styles.input}
+                  onBlur={onBlur}
+                  onChangeText={value => {
+                    onChange(value);
+                    setUserEmail(value);
+                  }}
+                  value={value}
+                  mode="outlined"
+                />
+              )}
+              name="email"
+              rules={{required: true}}
+              defaultValue={userEmail}
+            />
+
+            {errors.pin && (
+              <Text style={{color: 'red'}}>This is required.</Text>
+            )}
+            <Controller
+              control={control}
+              render={({field: {onChange, onBlur, value}}) => (
+                <TextInput
+                  label="Kata Sandi / PIN"
+                  style={styles.input}
+                  onBlur={onBlur}
+                  onChangeText={value => {
+                    onChange(value);
+                    setUserPin(value);
+                  }}
+                  value={userPin}
+                  mode="outlined"
+                />
+              )}
+              name="pin"
+              rules={{required: true}}
+              defaultValue={userPin}
+            />
+
+            {/* onPress={handleSubmit(onSubmit)} */}
+            <Button onPress={handleSubmit(onSubmit)} mode="contained">
+              Submit
+            </Button>
+
+            {/* Divider */}
+            <Divider style={{marginTop: 30}} />
+
+            {/* Menu Daftar Mobil */}
+            <View style={{marginTop: 20}}>
+              <List.Item
+                title="Daftar Mobil"
+                left={props => <List.Icon {...props} icon="car" />}
+                onPress={() => {
+                  navigation.navigate('CarList');
+                }}
+              />
+              <List.Item
+                title="Logout"
+                left={props => <List.Icon {...props} icon="logout" />}
+                onPress={() => {
+                  navigation.replace('Login');
+                }}
+              />
+            </View>
+            {/* <View style={{alignItems:'flex-start'}}>
             <Button style={{paddingLeft:-10}}>Daftar Mobil</Button>
           </View> */}
+          </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 };
 
@@ -236,7 +245,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 25,
     fontWeight: 'bold',
-    marginBottom: 40,
+    marginBottom: 20,
   },
 });
 

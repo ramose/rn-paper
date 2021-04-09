@@ -35,7 +35,7 @@ const LoginScreen = ({navigation}) => {
 
   return (
     <KeyboardAvoidingView behavior="height" enabled style={{flex: 1}}>
-      <StatusBar style="auto" translucent backgroundColor="#f7f7f7" />
+      {/* <StatusBar style="auto" translucent backgroundColor="#f7f7f7" /> */}
       <View style={{flex: 1}}>
         <ScrollView
           contentContainerStyle={{

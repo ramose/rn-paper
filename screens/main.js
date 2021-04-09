@@ -14,7 +14,7 @@ const AlbumsRoute = (navigation) => <Text>Albums</Text>;
 const RecentsRoute = () => <Text>Recents</Text>;
 
 const MainScreen = (props) => {
-  const [index, setIndex] = useState(3);
+  const [index, setIndex] = useState(0);
   const [routes] = useState([
     {key: 'home', title: 'Home', icon: 'home'},
     {key: 'jobs', title: 'Jobs', icon: 'check'},

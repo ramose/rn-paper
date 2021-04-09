@@ -1,33 +1,53 @@
-import React, {useState} from 'react'
-import { View, StyleSheet } from 'react-native'
-import { useNavigation } from '@react-navigation/native';
+import React, {useState} from 'react';
+import {View, StyleSheet, ScrollView} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 
 import {
-    TextInput,
-    Text,
-    Button,
-    Appbar
-    
-} from 'react-native-paper'
+  TextInput,
+  Text,
+  Button,
+  Appbar,
+  Card,
+  List,
+  Colors,
+} from 'react-native-paper';
+import CardHome from '../../../components/cardHome';
 
 const HomeContentScreen = () => {
+  const navigation = useNavigation();
 
-    const navigation = useNavigation();
+  function content(){
+    var cards = []
+    for(let i=0; i<10; i++){
+        cards.push(<CardHome color={Colors.blue500} />)
+    }
+    
+    return cards
+  }
 
-    return(
-        <View style={styles.root}>
-            <Text>Content...</Text>
-            <Button mode="contained" onPress={()=>navigation.navigate("Detail")}>See Detail</Button>
-        </View>
-    )
-}
+  return (
+    <View style={styles.root}>
+      <Text style={styles.title}>Home</Text>
+      <ScrollView>
+        
+        {content()}
+      </ScrollView>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
-    root:{
-        flex:1,
-        alignItems:'center',
-        justifyContent:'center'
-    }
-})
+  root: {
+    flex: 1,
+    paddingLeft: 10,
+    paddingRight:10,
+    paddingTop:10
+  },
+  title: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+});
 
-export default HomeContentScreen
+export default HomeContentScreen;
