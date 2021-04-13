@@ -18,9 +18,12 @@ const HomeContentScreen = () => {
 
   function content(){
     var cards = []
-    for(let i=0; i<10; i++){
-        cards.push(<CardHome color={Colors.blue500} />)
-    }
+    // for(let i=0; i<10; i++){
+    //     cards.push(<CardHome color={Colors.blue500} date="5/4/2021" time="17:00" route="Hotel - Airport" />)
+    // }
+
+    cards.push(<CardHome color={Colors.blue500} date="5/4/2021" time="17:00" route="Hotel - Airport" />)
+    cards.push(<CardHome color={Colors.blue500} date="18/4/2021" time="8:30" route="Kuta - Airport" status={2}/>)
     
     return cards
   }

@@ -14,6 +14,7 @@ import {
 import {useForm, Controller} from 'react-hook-form';
 import {TextInput, Button, Divider, List} from 'react-native-paper';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import CustomTextInput from '../../../components/textInput';
 
 const ProfileHomeScreen = ({navigation}) => {
   const [camResponse, setCamResponse] = useState(null);
@@ -21,6 +22,7 @@ const ProfileHomeScreen = ({navigation}) => {
   const [userEmail, setUserEmail] = useState('jhondoe@email.com');
   const [userId, setUserId] = useState('12');
   const [userPin, setUserPin] = useState('123456');
+  const [samePassword, setSamePassword] = useState(true);
 
   // Camera options
 
@@ -52,10 +54,23 @@ const ProfileHomeScreen = ({navigation}) => {
 
   function onSubmit(data) {
     console.log('submit:', data);
+    setSamePassword(true);
+    if (data.password != data.passwordConfirmation) {
+      setSamePassword(false);
+    }
   }
 
+  const errorMessage = msg => {
+    console.log(msg);
+    if (msg === undefined) {
+      return <Text style={{color: 'red'}}>This is required.</Text>;
+    } else {
+      return <Text style={{color: 'red'}}>{msg}</Text>;
+    }
+  };
+
   return (
-    <View style={{paddingTop: 10, paddingLeft:10, paddingRight:10, flex: 1}}>
+    <View style={{paddingTop: 10, paddingLeft: 10, paddingRight: 10, flex: 1}}>
       <Text style={styles.title}>Profil</Text>
       <ScrollView keyboardShouldPersistTaps="handled">
         <View>
@@ -75,124 +90,157 @@ const ProfileHomeScreen = ({navigation}) => {
           </Pressable>
 
           {/** Form */}
+          {errors.email && errorMessage('emailnya salah')}
 
-          {errors.username && (
+          <CustomTextInput
+            label="Email"
+            control={control}
+            name="email"
+            style={styles.input}
+            required={true}
+            defaultValue=""
+            type="email-address"
+          />
+
+          {errors.password && errorMessage()}
+
+          {!samePassword && errorMessage('password tidak cocok.')}
+
+          <CustomTextInput
+            label="Password"
+            control={control}
+            name="password"
+            style={styles.input}
+            required={true}
+          />
+
+          {errors.passwordConfirmation && (
             <Text style={{color: 'red'}}>This is required.</Text>
           )}
-          <View style={styles.container}>
-            <Controller
-              control={control}
-              render={({field: {onChange, onBlur, value}}) => (
-                <TextInput
-                  label="Nama"
-                  style={styles.input}
-                  onBlur={onBlur}
-                  onChangeText={value => {
-                    onChange(value);
-                  }}
-                  value={value}
-                  mode="outlined"
-                />
-              )}
-              name="username"
-              rules={{required: true}}
-              defaultValue={username}
+
+          {!samePassword && errorMessage('password tidak cocok.')}
+          <CustomTextInput
+            label="Password Confirmation"
+            control={control}
+            name="passwordConfirmation"
+            style={styles.input}
+            required={true}
+          />
+
+          <View
+            style={{backgroundColor: '#cecece', height: 1, marginVertical: 10}}
+          />
+
+          {errors.name && errorMessage()}
+          <CustomTextInput
+            label="Name"
+            control={control}
+            name="name"
+            style={styles.input}
+            required={true}
+            defaultValue=""
+          />
+
+          {errors.code && errorMessage()}
+          <CustomTextInput
+            label="Code"
+            control={control}
+            name="code"
+            style={styles.input}
+            required={true}
+            defaultValue=""
+          />
+
+          {errors.mobile && errorMessage()}
+          <CustomTextInput
+            label="Mobile"
+            control={control}
+            name="mobile"
+            style={styles.input}
+            required={true}
+            defaultValue=""
+            type="numeric"
+          />
+
+          <View
+            style={{backgroundColor: '#cecece', height: 1, marginVertical: 10}}
+          />
+
+          {errors.address && errorMessage()}
+          <CustomTextInput
+            label="Address"
+            control={control}
+            name="address"
+            style={styles.input}
+            required={true}
+            defaultValue=""
+          />
+
+          {errors.city && errorMessage()}
+          <CustomTextInput
+            label="City"
+            control={control}
+            name="city"
+            style={styles.input}
+            required={true}
+            defaultValue=""
+          />
+
+          {errors.state && errorMessage()}
+          <CustomTextInput
+            label="State"
+            control={control}
+            name="state"
+            style={styles.input}
+            required={true}
+            defaultValue=""
+          />
+
+          {errors.country && errorMessage()}
+          <CustomTextInput
+            label="Country"
+            control={control}
+            name="country"
+            style={styles.input}
+            required={true}
+            defaultValue=""
+          />
+
+          {errors.ktp && errorMessage()}
+          <CustomTextInput
+            label="KTP"
+            control={control}
+            name="ktp"
+            style={styles.input}
+            required={true}
+            defaultValue=""
+          />
+
+          {/* onPress={handleSubmit(onSubmit)} */}
+          <Button onPress={handleSubmit(onSubmit)} mode="contained">
+            Submit
+          </Button>
+
+          {/* Divider */}
+          <Divider style={{marginTop: 30}} />
+
+          {/* Menu Daftar Mobil */}
+          <View style={{marginTop: 20}}>
+            <List.Item
+              title="Data Mobil"
+              left={props => <List.Icon {...props} icon="car" />}
+              onPress={() => {
+                // navigation.navigate('CarList');
+                navigation.navigate('CarAdd')
+              }}
             />
-
-            {errors.id && <Text style={{color: 'red'}}>This is required.</Text>}
-            <Controller
-              control={control}
-              render={({field: {onChange, onBlur, value}}) => (
-                <TextInput
-                  label="Driver ID"
-                  style={styles.input}
-                  onBlur={onBlur}
-                  onChangeText={value => {
-                    onChange(value);
-                  }}
-                  value={value}
-                  mode="outlined"
-                />
-              )}
-              name="id"
-              rules={{required: true}}
-              defaultValue={userId}
+            <List.Item
+              title="Logout"
+              left={props => <List.Icon {...props} icon="logout" />}
+              onPress={() => {
+                navigation.replace('Login');
+              }}
             />
-
-            {errors.email && (
-              <Text style={{color: 'red'}}>This is required.</Text>
-            )}
-            <Controller
-              control={control}
-              render={({field: {onChange, onBlur, value}}) => (
-                <TextInput
-                  label="Email"
-                  style={styles.input}
-                  onBlur={onBlur}
-                  onChangeText={value => {
-                    onChange(value);
-                    setUserEmail(value);
-                  }}
-                  value={value}
-                  mode="outlined"
-                />
-              )}
-              name="email"
-              rules={{required: true}}
-              defaultValue={userEmail}
-            />
-
-            {errors.pin && (
-              <Text style={{color: 'red'}}>This is required.</Text>
-            )}
-            <Controller
-              control={control}
-              render={({field: {onChange, onBlur, value}}) => (
-                <TextInput
-                  label="Kata Sandi / PIN"
-                  style={styles.input}
-                  onBlur={onBlur}
-                  onChangeText={value => {
-                    onChange(value);
-                    setUserPin(value);
-                  }}
-                  value={userPin}
-                  mode="outlined"
-                />
-              )}
-              name="pin"
-              rules={{required: true}}
-              defaultValue={userPin}
-            />
-
-            {/* onPress={handleSubmit(onSubmit)} */}
-            <Button onPress={handleSubmit(onSubmit)} mode="contained">
-              Submit
-            </Button>
-
-            {/* Divider */}
-            <Divider style={{marginTop: 30}} />
-
-            {/* Menu Daftar Mobil */}
-            <View style={{marginTop: 20}}>
-              <List.Item
-                title="Daftar Mobil"
-                left={props => <List.Icon {...props} icon="car" />}
-                onPress={() => {
-                  navigation.navigate('CarList');
-                }}
-              />
-              <List.Item
-                title="Logout"
-                left={props => <List.Icon {...props} icon="logout" />}
-                onPress={() => {
-                  navigation.replace('Login');
-                }}
-              />
-            </View>
-            {/* <View style={{alignItems:'flex-start'}}>
-            <Button style={{paddingLeft:-10}}>Daftar Mobil</Button>
-          </View> */}
           </View>
         </View>
       </ScrollView>

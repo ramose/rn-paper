@@ -16,6 +16,7 @@ import {useForm, Controller} from 'react-hook-form';
 import {TextInput, Button, Divider, List, Appbar} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import {launchCamera} from 'react-native-image-picker';
+import CustomTextInput from '../../../components/textInput';
 
 const CarAddScreen = ({navigation}) => {
   const [camResponse, setCamResponse] = useState(null);
@@ -66,7 +67,7 @@ const CarAddScreen = ({navigation}) => {
       <View>
         <Appbar>
           <Appbar.BackAction onPress={() => navigation.pop()} />
-          <Text style={{color: 'white'}}>Tambah Mobil</Text>
+          <Text style={{color: 'black'}}>Tambah Mobil</Text>
           <View style={{flex: 1}} />
           <Appbar.Action
             icon="check"
@@ -76,9 +77,9 @@ const CarAddScreen = ({navigation}) => {
       </View>
 
       <ScrollView keyboardShouldPersistTaps="handled">
-        <View style={{padding: 23}}>
+        <View style={{padding: 18}}>
           {/** Image */}
-          <TouchableOpacity onPress={()=>showCamera()}>
+          <TouchableOpacity onPress={() => showCamera()}>
             {camResponse === null && (
               <Image
                 style={styles.image}
@@ -94,135 +95,20 @@ const CarAddScreen = ({navigation}) => {
           {/** Form */}
 
           <View style={styles.container}>
-            <Controller
-              control={control}
-              render={({field: {onChange, onBlur, value}}) => (
-                <TextInput
-                  label="Merek"
-                  style={styles.input}
-                  onBlur={onBlur}
-                  onChangeText={value => onChange(value)}
-                  value={value}
-                />
-              )}
-              name="brand"
-              rules={{required: true}}
-              defaultValue=""
-            />
-            {/* {errors.username && <Text>This is required.</Text>} */}
-            {/* {errors.username} */}
+            {errors.model && errorMessage()}
 
-            <Controller
-              control={control}
-              render={({field: {onChange, onBlur, value}}) => (
-                <TextInput
-                  label="Tahun"
-                  style={styles.input}
-                  onBlur={onBlur}
-                  onChangeText={value => onChange(value)}
-                  value={value}
-                />
-              )}
-              name="year"
-              rules={{required: true}}
-              defaultValue=""
-            />
-
-            <Controller
-              control={control}
-              render={({field: {onChange, onBlur, value}}) => (
-                <TextInput
-                  label="Capacity"
-                  style={styles.input}
-                  onBlur={onBlur}
-                  onChangeText={value => onChange(value)}
-                  value={value}
-                />
-              )}
-              name="cap"
-              rules={{required: true}}
-              defaultValue=""
-            />
-
-            <Controller
-              control={control}
-              render={({field: {onChange, onBlur, value}}) => (
-                <TextInput
-                  label="Cylinder"
-                  style={styles.input}
-                  onBlur={onBlur}
-                  onChangeText={value => onChange(value)}
-                  value={value}
-                />
-              )}
-              name="cyl"
-              rules={{required: true}}
-              defaultValue=""
-            />
-
-            <Controller
-              control={control}
-              render={({field: {onChange, onBlur, value}}) => (
-                <TextInput
-                  label="Type"
-                  style={styles.input}
-                  onBlur={onBlur}
-                  onChangeText={value => onChange(value)}
-                  value={value}
-                />
-              )}
-              name="type"
-              rules={{required: true}}
-              defaultValue=""
-            />
-
-            <Controller
-              control={control}
-              render={({field: {onChange, onBlur, value}}) => (
-                <TextInput
-                  label="Name"
-                  style={styles.input}
-                  onBlur={onBlur}
-                  onChangeText={value => onChange(value)}
-                  value={value}
-                />
-              )}
-              name="name"
-              rules={{required: true}}
-              defaultValue=""
-            />
-
-            <Controller
-              control={control}
-              render={({field: {onChange, onBlur, value}}) => (
-                <TextInput
-                  label="Transmission"
-                  style={styles.input}
-                  onBlur={onBlur}
-                  onChangeText={value => onChange(value)}
-                  value={value}
-                />
-              )}
-              name="trans"
-              rules={{required: true}}
-              defaultValue=""
-            />
-
-            <Controller
-              control={control}
-              render={({field: {onChange, onBlur, value}}) => (
-                <TextInput
-                  label="KTP"
-                  style={styles.input}
-                  onBlur={onBlur}
-                  onChangeText={value => onChange(value)}
-                  value={value}
-                />
-              )}
-              name="ktp"
-              rules={{required: true}}
-              defaultValue=""
-            />
+            <TouchableOpacity onPress={() => console.log('show spinner')}>
+              <View
+                style={{
+                  padding: 10,
+                  borderColor: 'gray',
+                  borderWidth: 1,
+                  borderRadius: 5,
+                  marginBottom:10
+                }}>
+                <Text>Model...</Text>
+              </View>
+            </TouchableOpacity>
 
             {/* onPress={handleSubmit(onSubmit)} */}
             <Button onPress={handleSubmit(onSubmit)} mode="contained">
