@@ -13,7 +13,7 @@ import {
 } from 'react-native-paper';
 import CardHome from '../../../components/cardHome';
 
-const HomeContentScreen = () => {
+const JobsHomeScreen = () => {
   const navigation = useNavigation();
 
   function content(){
@@ -30,11 +30,14 @@ const HomeContentScreen = () => {
 
   return (
     <View style={styles.root}>
-      <Text style={styles.title}>Home</Text>
-      <ScrollView>
+      <Text style={styles.title}>Jobs</Text>
+      {/* <ScrollView>
         
         {content()}
-      </ScrollView>
+      </ScrollView> */}
+      <View>
+        <Text>Belum ada data...</Text>
+      </View>
     </View>
   );
 };
@@ -53,4 +56,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeContentScreen;
+export default JobsHomeScreen;

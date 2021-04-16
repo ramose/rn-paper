@@ -5,6 +5,8 @@ import HomeScreen from './stacks/home/homeStack';
 import ProfileStackScreen from './stacks/profile/profileStack';
 import HomeStackScreen from './stacks/home/homeStack';
 import HomeContentScreen from './stacks/home/homeContent';
+import JobsHomeScreen from './stacks/jobs/jobsHome';
+import SaldoHomeScreen from './stacks/saldo/saldoHome';
 
 
 // const MusicRoute = (props) => <HomeScreen2 nav={props.navigation}/>;
@@ -14,7 +16,7 @@ const AlbumsRoute = (navigation) => <Text>Albums</Text>;
 const RecentsRoute = () => <Text>Recents</Text>;
 
 const MainScreen = (props) => {
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(3);
   const [routes] = useState([
     {key: 'home', title: 'Home', icon: 'home'},
     {key: 'jobs', title: 'Jobs', icon: 'check'},
@@ -24,8 +26,8 @@ const MainScreen = (props) => {
 
   const renderScene = BottomNavigation.SceneMap({
     home: HomeContentScreen,
-    jobs: AlbumsRoute,
-    saldo: RecentsRoute,
+    jobs: JobsHomeScreen,
+    saldo: SaldoHomeScreen,
     profile: ProfileStackScreen,
   });
 

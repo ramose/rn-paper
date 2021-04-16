@@ -16,7 +16,7 @@ import {TextInput, Button, Divider, List} from 'react-native-paper';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import CustomTextInput from '../../../components/textInput';
 
-const ProfileHomeScreen = ({navigation}) => {
+const ProfileEditScreen = ({navigation}) => {
   const [camResponse, setCamResponse] = useState(null);
   const [username, setUsername] = useState('Jhon Doe');
   const [userEmail, setUserEmail] = useState('jhondoe@email.com');
@@ -71,7 +71,12 @@ const ProfileHomeScreen = ({navigation}) => {
 
   return (
     <View style={{paddingTop: 10, paddingLeft: 10, paddingRight: 10, flex: 1}}>
+      <View style={{flexDirection: 'row'}}>
       <Text style={styles.title}>Profil</Text>
+      <View style={{flex:1}}/>
+      <Button>Edit</Button>
+      </View>
+      
       <ScrollView keyboardShouldPersistTaps="handled">
         <View>
           {/** Image */}
@@ -218,7 +223,7 @@ const ProfileHomeScreen = ({navigation}) => {
 
           {/* onPress={handleSubmit(onSubmit)} */}
           <Button onPress={handleSubmit(onSubmit)} mode="contained">
-            Save
+            Submit
           </Button>
 
           {/* Divider */}
@@ -297,4 +302,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProfileHomeScreen;
+export default ProfileEditScreen;
