@@ -7,7 +7,7 @@ import {
   Dimensions,
   TouchableOpacity,
   ScrollView,
-  Alert
+  Alert,
 } from 'react-native';
 // import LinearGradient from 'react-native-linear-gradient';
 import {useForm} from 'react-hook-form';
@@ -17,13 +17,16 @@ import {
   Title,
   IconButton,
   Colors,
-  Button
+  Button,
+  ActivityIndicator,
 } from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import {launchCamera} from 'react-native-image-picker';
 import CustomTextInput from '../../../components/textInput';
 import {BottomSheet, ListItem} from 'react-native-elements';
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import {modelsUrl} from '../../../services/api';
 
 const CarAddScreen = ({navigation}) => {
   const [camResponse, setCamResponse] = useState(null);
@@ -33,6 +36,8 @@ const CarAddScreen = ({navigation}) => {
   const [model, setModel] = useState('model');
   const [type, setType] = useState('type');
   const [transmission, setTransmission] = useState('transmission');
+  const [models, setModels] = useState([]);
+  const [busy, setBusy] = useState(false);
 
   const containerStyle = {backgroundColor: 'white', padding: 20};
 
@@ -47,7 +52,21 @@ const CarAddScreen = ({navigation}) => {
     storeData(data);
   }
 
-  const models = [{title: 'Model 1'}, {title: 'Model 2'}, {title: 'Model 3'}];
+  const getModels = () => {
+    console.log('get models...');
+    axios
+      .get(modelsUrl)
+      .then(function (response) {
+        console.log(response.data.data);
+        setModels(response.data.data);
+        setBusy(false);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
+  // const models = [{title: 'Model 1'}, {title: 'Model 2'}, {title: 'Model 3'}];
   const transmissions = [{title: 'Manual'}, {title: 'Automatic'}];
 
   function showCamera() {
@@ -66,22 +85,22 @@ const CarAddScreen = ({navigation}) => {
     );
   }
 
-  const storeData = async (data) => {
+  const storeData = async data => {
     try {
-      const json = JSON.stringify(data)
-      await AsyncStorage.setItem('vehicle', json)
-      showAlert('Sukses menyimpan data')
+      const json = JSON.stringify(data);
+      await AsyncStorage.setItem('vehicle', json);
+      showAlert('Sukses menyimpan data');
     } catch (error) {
-      showAlert(''+error)
+      showAlert('' + error);
     }
-  }
+  };
 
   const getData = async () => {
     try {
-      const json = await AsyncStorage.getItem('vehicle')
+      const json = await AsyncStorage.getItem('vehicle');
       let data = await JSON.parse(json);
 
-      console.log('data: ',data)
+      console.log('data: ', data);
 
       setValue('model', data['model']);
       setValue('plate', data['plate']);
@@ -90,27 +109,24 @@ const CarAddScreen = ({navigation}) => {
       setValue('transmission', data['transmission']);
       setValue('status', data['status']);
       setValue('note', data['note']);
-    } catch (error) {
-      
-    }
-  }
+    } catch (error) {}
+  };
 
-  const showAlert = (msg) => {
-    Alert.alert(
-      '',
-      msg,
-      [
-        {
-          title:'OK',
-          onPress:() => {}
-        }
-      ]
-    )
-  }
+  const showAlert = msg => {
+    Alert.alert('', msg, [
+      {
+        title: 'OK',
+        onPress: () => {},
+      },
+    ]);
+  };
 
-  useEffect(()=>{
-    getData()
-  }, [])
+  useEffect(() => {
+    setBusy(true);
+    getData();
+    getModels();
+    // setBusy(false);
+  }, []);
 
   return (
     <View style={styles.root}>
@@ -126,10 +142,18 @@ const CarAddScreen = ({navigation}) => {
         </Appbar>
       </View>
 
-      <ScrollView keyboardShouldPersistTaps="handled">
-        <View style={{padding: 18}}>
-          {/** Image */}
-          {/* <TouchableOpacity onPress={() => showCamera()}>
+      {busy === true && (
+        <View style={{alignItems:'center'}}>
+          <ActivityIndicator animating={true} style={{marginTop: 30}} />
+          <Text>Loading models</Text>
+        </View>
+      )}
+
+      {busy === false && (
+        <ScrollView keyboardShouldPersistTaps="handled">
+          <View style={{padding: 18}}>
+            {/** Image */}
+            {/* <TouchableOpacity onPress={() => showCamera()}>
             {camResponse === null && (
               <Image
                 style={styles.image}
@@ -142,96 +166,96 @@ const CarAddScreen = ({navigation}) => {
             )}
           </TouchableOpacity> */}
 
-          {/** Form */}
+            {/** Form */}
 
-          {/** Pilih Model */}
-          <BottomSheet
-            isVisible={showSheetModel}
-            containerStyle={{backgroundColor: 'rgba(0.5, 0.25, 0, 0.2)'}}>
-            <View
-              style={{
-                flexDirection: 'row',
-                padding: 10,
-                backgroundColor: 'white',
-              }}>
-              <Title>Pilih Model</Title>
-              <View style={{flex: 1}} />
-              <IconButton
-                icon="close"
-                color={Colors.red500}
-                onPress={() => {
-                  setshowSheetModel(false);
-                }}
-              />
-            </View>
+            {/** Pilih Model */}
+            <BottomSheet
+              isVisible={showSheetModel}
+              containerStyle={{backgroundColor: 'rgba(0.5, 0.25, 0, 0.2)'}}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  padding: 10,
+                  backgroundColor: 'white',
+                }}>
+                <Title>Pilih Model</Title>
+                <View style={{flex: 1}} />
+                <IconButton
+                  icon="close"
+                  color={Colors.red500}
+                  onPress={() => {
+                    setshowSheetModel(false);
+                  }}
+                />
+              </View>
 
-            <ScrollView>
-              {models.map((l, i) => (
-                <ListItem
-                  key={i}
-                  containerStyle={l.containerStyle}
-                  onPress={l.onPress}>
-                  <TouchableOpacity
-                    onPress={() => {
-                      // setModel(l.title);
-                      setValue('model', l.title);
-                      setshowSheetModel(false);
-                    }}>
-                    <ListItem.Content>
-                      <ListItem.Title style={l.titleStyle}>
-                        {l.title}
-                      </ListItem.Title>
-                    </ListItem.Content>
-                  </TouchableOpacity>
-                </ListItem>
-              ))}
-            </ScrollView>
-          </BottomSheet>
+              <ScrollView>
+                {models.map((l, i) => (
+                  <ListItem
+                    key={i}
+                    containerStyle={l.containerStyle}
+                    onPress={l.onPress}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        // setModel(l.title);
+                        setValue('model', l.name);
+                        setshowSheetModel(false);
+                      }}>
+                      <ListItem.Content>
+                        <ListItem.Title style={l.titleStyle}>
+                          {l.name}
+                        </ListItem.Title>
+                      </ListItem.Content>
+                    </TouchableOpacity>
+                  </ListItem>
+                ))}
+              </ScrollView>
+            </BottomSheet>
 
-          {/** Pilih transmisi */}
-          <BottomSheet
-            isVisible={showSheetTrans}
-            containerStyle={{backgroundColor: 'rgba(0.5, 0.25, 0, 0.2)'}}>
-            <View
-              style={{
-                flexDirection: 'row',
-                padding: 10,
-                backgroundColor: 'white',
-              }}>
-              <Title>Pilih Transmisi</Title>
-              <View style={{flex: 1}} />
-              <IconButton
-                icon="close"
-                color={Colors.red500}
-                onPress={() => {
-                  setshowSheetTrans(false);
-                }}
-              />
-            </View>
+            {/** Pilih transmisi */}
+            <BottomSheet
+              isVisible={showSheetTrans}
+              containerStyle={{backgroundColor: 'rgba(0.5, 0.25, 0, 0.2)'}}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  padding: 10,
+                  backgroundColor: 'white',
+                }}>
+                <Title>Pilih Transmisi</Title>
+                <View style={{flex: 1}} />
+                <IconButton
+                  icon="close"
+                  color={Colors.red500}
+                  onPress={() => {
+                    setshowSheetTrans(false);
+                  }}
+                />
+              </View>
 
-            <ScrollView>
-              {transmissions.map((l, i) => (
-                <ListItem
-                  key={i}
-                  containerStyle={l.containerStyle}
-                  onPress={l.onPress}>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setValue('transmission',l.title);
-                      setshowSheetTrans(false);
-                    }}>
-                    <ListItem.Content>
-                      <ListItem.Title style={l.titleStyle}>
-                        {l.title}
-                      </ListItem.Title>
-                    </ListItem.Content>
-                  </TouchableOpacity>
-                </ListItem>
-              ))}
-            </ScrollView>
-          </BottomSheet>
+              <ScrollView>
+                {transmissions.map((l, i) => (
+                  <ListItem
+                    key={i}
+                    containerStyle={l.containerStyle}
+                    onPress={l.onPress}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setValue('transmission', l.title);
+                        setshowSheetTrans(false);
+                      }}>
+                      <ListItem.Content>
+                        <ListItem.Title style={l.titleStyle}>
+                          {l.title}
+                        </ListItem.Title>
+                      </ListItem.Content>
+                    </TouchableOpacity>
+                  </ListItem>
+                ))}
+              </ScrollView>
+            </BottomSheet>
 
-          {/* <CustomBottomSheet
+            {/* <CustomBottomSheet
             show={showSheetTrans}
             title="Pilih Transmisi"
             items={transmissions}
@@ -241,11 +265,11 @@ const CarAddScreen = ({navigation}) => {
             }}
           /> */}
 
-          <View style={styles.container}>
-            {errors.model && errorMessage()}
+            <View style={styles.container}>
+              {errors.model && errorMessage()}
 
-            <TouchableOpacity onPress={() => setshowSheetModel(true)}>
-              {/* <View
+              <TouchableOpacity onPress={() => setshowSheetModel(true)}>
+                {/* <View
                 style={{
                   padding: 10,
                   borderColor: 'gray',
@@ -255,79 +279,74 @@ const CarAddScreen = ({navigation}) => {
                 }}>
                 <Text>{model}</Text>
               </View> */}
+                <CustomTextInput
+                  disabled={true}
+                  label="Model"
+                  control={control}
+                  name="model"
+                  style={styles.input}
+                  required={true}
+                />
+              </TouchableOpacity>
+
+              {errors.plate && errorMessage()}
               <CustomTextInput
-              disabled={true}
-                label="Model"
+                label="Plate"
                 control={control}
-                name="model"
+                name="plate"
+                style={styles.input}
+                required={true}
+                defaultValue=""
+              />
+
+              {errors.capacity && errorMessage()}
+              <CustomTextInput
+                label="Capacity"
+                control={control}
+                name="capacity"
                 style={styles.input}
                 required={true}
               />
-            </TouchableOpacity>
 
-            {errors.plate && errorMessage()}
-            <CustomTextInput
-              label="Plate"
-              control={control}
-              name="plate"
-              style={styles.input}
-              required={true}
-              defaultValue=""
-            />
+              {errors.year && errorMessage()}
+              <CustomTextInput
+                label="Year"
+                control={control}
+                name="year"
+                style={styles.input}
+                required={true}
+                type="numeric"
+              />
 
-            {errors.capacity && errorMessage()}
-            <CustomTextInput
-              label="Capacity"
-              control={control}
-              name="capacity"
-              style={styles.input}
-              required={true}
-            />
+              <TouchableOpacity onPress={() => setshowSheetTrans(true)}>
+                <CustomTextInput
+                  disabled={true}
+                  label="Transmission"
+                  control={control}
+                  name="transmission"
+                  style={styles.input}
+                  required={true}
+                />
+              </TouchableOpacity>
 
-            {errors.year && errorMessage()}
-            <CustomTextInput
-              label="Year"
-              control={control}
-              name="year"
-              style={styles.input}
-              required={true}
-              type="numeric"
-            />
+              <CustomTextInput
+                label="Note"
+                control={control}
+                name="note"
+                style={styles.input}
+                required={false}
+                multiline={true}
+                numberOfLines={4}
+              />
 
-            <TouchableOpacity onPress={() => setshowSheetTrans(true)}>
-            <CustomTextInput
-            disabled={true}
-              label="Transmission"
-              control={control}
-              name="transmission"
-              style={styles.input}
-              required={true}
-            />
-            </TouchableOpacity>
-
-            {/* <TextInput
-              mode="outlined"
-              multiline={true}
-              numberOfLines={4}
-              style={{marginBottom: 20}}
-              placeholder="Note"
-            /> */}
-
-<CustomTextInput
-              label="Note"
-              control={control}
-              name="note"
-              style={styles.input}
-              required={false}
-            />
-
-            {/* onPress={handleSubmit(onSubmit)} */}
-            <Button onPress={handleSubmit(onSubmit)} mode="contained">
-              Save
-            </Button>
+              {/* onPress={handleSubmit(onSubmit)} */}
+              <Button onPress={handleSubmit(onSubmit)} mode="contained">
+                Save
+              </Button>
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      )}
     </View>
   );
 };
