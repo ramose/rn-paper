@@ -20,6 +20,8 @@ const CustomTextInput = props => {
           value={value}
           mode="outlined"
           keyboardType={props.type}
+          multiline={props.multiline}
+          numberOfLines={props.numberOfLines}
         />
       )}
       name={props.name}
@@ -38,5 +40,7 @@ CustomTextInput.propTypes = {
   required: PropTypes.bool,
   defaultValue: PropTypes.string,
   type: PropTypes.string,
-  disabled: PropTypes.bool
+  disabled: PropTypes.bool,
+  multiline: PropTypes.bool,
+  numberOfLines: PropTypes.number
 };

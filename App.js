@@ -19,7 +19,7 @@ const Stack = createStackNavigator();
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Main"
+      <Stack.Navigator initialRouteName="Login"
       screenOptions={{
         headerShown:false,
         headerStyle:{

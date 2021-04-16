@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Image,
@@ -7,27 +7,23 @@ import {
   Dimensions,
   TouchableOpacity,
   ScrollView,
+  Alert
 } from 'react-native';
 // import LinearGradient from 'react-native-linear-gradient';
-import {useForm, Controller} from 'react-hook-form';
+import {useForm} from 'react-hook-form';
 import {
   TextInput,
-  Button,
-  Divider,
-  List,
   Appbar,
-  Modal,
-  Portal,
   Title,
-  Subheading,
   IconButton,
   Colors,
+  Button
 } from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import {launchCamera} from 'react-native-image-picker';
 import CustomTextInput from '../../../components/textInput';
 import {BottomSheet, ListItem} from 'react-native-elements';
-import CustomBottomSheet from '../../../components/bottomSheet';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CarAddScreen = ({navigation}) => {
   const [camResponse, setCamResponse] = useState(null);
@@ -43,10 +39,13 @@ const CarAddScreen = ({navigation}) => {
   const {
     control,
     handleSubmit,
+    setValue,
     formState: {errors},
-  } = useForm();
+  } = useForm({mode: 'onBlur'});
 
-  const onSubmit = data => console.log(data);
+  function onSubmit(data) {
+    storeData(data);
+  }
 
   const models = [{title: 'Model 1'}, {title: 'Model 2'}, {title: 'Model 3'}];
   const transmissions = [{title: 'Manual'}, {title: 'Automatic'}];
@@ -67,10 +66,51 @@ const CarAddScreen = ({navigation}) => {
     );
   }
 
-  function updateType(type) {
-    console.log('update type...', type);
-    // setType(type)
+  const storeData = async (data) => {
+    try {
+      const json = JSON.stringify(data)
+      await AsyncStorage.setItem('vehicle', json)
+      showAlert('Sukses menyimpan data')
+    } catch (error) {
+      showAlert(''+error)
+    }
   }
+
+  const getData = async () => {
+    try {
+      const json = await AsyncStorage.getItem('vehicle')
+      let data = await JSON.parse(json);
+
+      console.log('data: ',data)
+
+      setValue('model', data['model']);
+      setValue('plate', data['plate']);
+      setValue('capacity', data['capacity']);
+      setValue('year', data['year']);
+      setValue('transmission', data['transmission']);
+      setValue('status', data['status']);
+      setValue('note', data['note']);
+    } catch (error) {
+      
+    }
+  }
+
+  const showAlert = (msg) => {
+    Alert.alert(
+      '',
+      msg,
+      [
+        {
+          title:'OK',
+          onPress:() => {}
+        }
+      ]
+    )
+  }
+
+  useEffect(()=>{
+    getData()
+  }, [])
 
   return (
     <View style={styles.root}>
@@ -78,11 +118,11 @@ const CarAddScreen = ({navigation}) => {
         <Appbar>
           <Appbar.BackAction onPress={() => navigation.pop()} />
           <Text style={{color: 'black'}}>Data Mobil</Text>
-          <View style={{flex: 1}} />
+          {/* <View style={{flex: 1}} />
           <Appbar.Action
             icon="check"
             onPress={() => console.log('Done edit')}
-          />
+          /> */}
         </Appbar>
       </View>
 
@@ -133,7 +173,8 @@ const CarAddScreen = ({navigation}) => {
                   onPress={l.onPress}>
                   <TouchableOpacity
                     onPress={() => {
-                      setModel(l.title);
+                      // setModel(l.title);
+                      setValue('model', l.title);
                       setshowSheetModel(false);
                     }}>
                     <ListItem.Content>
@@ -176,7 +217,7 @@ const CarAddScreen = ({navigation}) => {
                   onPress={l.onPress}>
                   <TouchableOpacity
                     onPress={() => {
-                      setTransmission(l.title);
+                      setValue('transmission',l.title);
                       setshowSheetTrans(false);
                     }}>
                     <ListItem.Content>
@@ -204,7 +245,7 @@ const CarAddScreen = ({navigation}) => {
             {errors.model && errorMessage()}
 
             <TouchableOpacity onPress={() => setshowSheetModel(true)}>
-              <View
+              {/* <View
                 style={{
                   padding: 10,
                   borderColor: 'gray',
@@ -213,20 +254,15 @@ const CarAddScreen = ({navigation}) => {
                   marginBottom: 10,
                 }}>
                 <Text>{model}</Text>
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={() => setshowSheetTipe(true)}>
-              <View
-                style={{
-                  padding: 10,
-                  borderColor: 'gray',
-                  borderWidth: 1,
-                  borderRadius: 5,
-                  marginBottom: 10,
-                }}>
-                <Text>{type}</Text>
-              </View>
+              </View> */}
+              <CustomTextInput
+              disabled={true}
+                label="Model"
+                control={control}
+                name="model"
+                style={styles.input}
+                required={true}
+              />
             </TouchableOpacity>
 
             {errors.plate && errorMessage()}
@@ -246,7 +282,6 @@ const CarAddScreen = ({navigation}) => {
               name="capacity"
               style={styles.input}
               required={true}
-              defaultValue=""
             />
 
             {errors.year && errorMessage()}
@@ -256,35 +291,40 @@ const CarAddScreen = ({navigation}) => {
               name="year"
               style={styles.input}
               required={true}
-              defaultValue=""
               type="numeric"
             />
 
             <TouchableOpacity onPress={() => setshowSheetTrans(true)}>
-              <View
-                style={{
-                  padding: 10,
-                  borderColor: 'gray',
-                  borderWidth: 1,
-                  borderRadius: 5,
-                  marginBottom: 10,
-                }}>
-                <Text>{transmission}</Text>
-              </View>
+            <CustomTextInput
+            disabled={true}
+              label="Transmission"
+              control={control}
+              name="transmission"
+              style={styles.input}
+              required={true}
+            />
             </TouchableOpacity>
 
-            <TextInput
-            mode='outlined'
-            multiline={true}
-            numberOfLines={4}
-            style={{marginBottom:20}}
-            placeholder="Note"
+            {/* <TextInput
+              mode="outlined"
+              multiline={true}
+              numberOfLines={4}
+              style={{marginBottom: 20}}
+              placeholder="Note"
+            /> */}
+
+<CustomTextInput
+              label="Note"
+              control={control}
+              name="note"
+              style={styles.input}
+              required={false}
             />
 
             {/* onPress={handleSubmit(onSubmit)} */}
-            {/* <Button onPress={handleSubmit(onSubmit)} mode="contained">
+            <Button onPress={handleSubmit(onSubmit)} mode="contained">
               Save
-            </Button> */}
+            </Button>
           </View>
         </View>
       </ScrollView>

@@ -6,20 +6,73 @@ import {
   View,
   KeyboardAvoidingView,
   Image,
-  StatusBar,
+  Alert,
 } from 'react-native';
 // import * as firebase from 'firebase';
 
 import {Text, TextInput, Button} from 'react-native-paper';
+import { loginUrl} from '../../../services/api';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = ({navigation}) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('jhondoe1@email.com');
+  const [password, setPassword] = useState('123456');  
   const [loading, setLoading] = useState(false);
 
+
+  const storeData = async value => {
+    try {
+      await AsyncStorage.setItem('@storage_Key', value);
+    } catch (e) {
+      // saving error
+    }
+  };
+
   async function login() {
+    if (email === '' || password === '') {
+      Alert.alert('Data tidak lengkap', 'Semua field harus diisi', [
+        {
+          text: 'OK',
+          onPress: () => {},
+        },
+      ]);
+
+      return;
+    }
+
     setLoading(true);
-    navigation.navigate('Main');
+
+    //* post
+    axios
+      .post(loginUrl, {
+        email: email,
+        password: password
+      })
+      .then(response => {
+        setLoading(false);
+
+        if (response.data.status === 'error') {
+          Alert.alert(' ', response.data.message, [
+            {
+              text: 'OK',
+              onPress: () => {},
+            },
+          ]);
+        } else {
+          storeData(email);
+          navigation.navigate('Main');
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+    //* save to local
+
+    //* go to main
+
+    // navigation.navigate('Main');
     // await firebase
     // 	.auth()
     // 	.signInWithEmailAndPassword(email, password)

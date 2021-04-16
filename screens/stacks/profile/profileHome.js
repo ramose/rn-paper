@@ -5,24 +5,29 @@ import {
   Text,
   StyleSheet,
   Dimensions,
-  //   Button,
-  TouchableOpacity,
-  Animated,
   ScrollView,
   Pressable,
+  Alert
 } from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
 import {TextInput, Button, Divider, List} from 'react-native-paper';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import CustomTextInput from '../../../components/textInput';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProfileHomeScreen = ({navigation}) => {
   const [camResponse, setCamResponse] = useState(null);
-  const [username, setUsername] = useState('Jhon Doe');
-  const [userEmail, setUserEmail] = useState('jhondoe@email.com');
-  const [userId, setUserId] = useState('12');
-  const [userPin, setUserPin] = useState('123456');
-  const [samePassword, setSamePassword] = useState(true);
+  const [name, setName] = useState('');
+  // const [code, setCode] = useState('');
+  const [mobile, setMobile] = useState('');
+  const [address, setAddress] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [country, setCountry] = useState('');
+  const [ktp, setKtp] = useState('');
+  const [note, setNote] = useState('');
+  const [profile, setProfile] = useState({});
 
   // Camera options
 
@@ -46,19 +51,69 @@ const ProfileHomeScreen = ({navigation}) => {
     );
   }
 
+  const showAlert = (msg) => {
+    Alert.alert(
+      '',
+      msg,
+      [
+        {
+          title:'OK',
+          onPress:() => {}
+        }
+      ]
+    )
+  }
+
   const {
     control,
     handleSubmit,
+    setValue,
     formState: {errors},
-  } = useForm();
+  } = useForm({mode: 'onBlur'});
+
+  const storeData = async value => {
+    try {
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem('profile', jsonValue);
+    } catch (e) {
+      // saving error
+    }
+  };
+
+  const getData = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem('profile');
+      // return jsonValue != null ? JSON.parse(jsonValue) : null;
+      let data = await JSON.parse(jsonValue);
+
+      // console.log('profile: ', data);
+      // setProfile(JSON.parse(jsonValue))
+
+      setValue('name', data['name']);
+      setValue('code', data['code']);
+      setValue('mobile', data['mobile']);
+      setValue('address', data['address']);
+      setValue('city', data['city']);
+      setValue('state', data['state']);
+      setValue('country', data['country']);
+      setValue('ktp_no', data['ktp_no']);
+      setValue('note', data['note']);
+
+      // setUsername(profileData['name'])
+    } catch (e) {
+      // error reading value
+      console.log('error: ', e);
+    }
+  };
 
   function onSubmit(data) {
-    console.log('submit:', data);
-    setSamePassword(true);
-    if (data.password != data.passwordConfirmation) {
-      setSamePassword(false);
-    }
+    storeData(data);
+    showAlert('Sukses menyimpan data')
   }
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   const errorMessage = msg => {
     console.log(msg);
@@ -72,6 +127,7 @@ const ProfileHomeScreen = ({navigation}) => {
   return (
     <View style={{paddingTop: 10, paddingLeft: 10, paddingRight: 10, flex: 1}}>
       <Text style={styles.title}>Profil</Text>
+      {/* <Button onPress={() => getData()}>Get Data</Button> */}
       <ScrollView keyboardShouldPersistTaps="handled">
         <View>
           {/** Image */}
@@ -90,8 +146,7 @@ const ProfileHomeScreen = ({navigation}) => {
           </Pressable>
 
           {/** Form */}
-          {errors.email && errorMessage('emailnya salah')}
-
+          {/* {errors.email && errorMessage('emailnya salah')}
           <CustomTextInput
             label="Email"
             control={control}
@@ -129,7 +184,7 @@ const ProfileHomeScreen = ({navigation}) => {
 
           <View
             style={{backgroundColor: '#cecece', height: 1, marginVertical: 10}}
-          />
+          /> */}
 
           {errors.name && errorMessage()}
           <CustomTextInput
@@ -138,7 +193,6 @@ const ProfileHomeScreen = ({navigation}) => {
             name="name"
             style={styles.input}
             required={true}
-            defaultValue=""
           />
 
           {errors.code && errorMessage()}
@@ -148,7 +202,6 @@ const ProfileHomeScreen = ({navigation}) => {
             name="code"
             style={styles.input}
             required={true}
-            defaultValue=""
           />
 
           {errors.mobile && errorMessage()}
@@ -158,7 +211,7 @@ const ProfileHomeScreen = ({navigation}) => {
             name="mobile"
             style={styles.input}
             required={true}
-            defaultValue=""
+            defaultValue={mobile}
             type="numeric"
           />
 
@@ -173,7 +226,6 @@ const ProfileHomeScreen = ({navigation}) => {
             name="address"
             style={styles.input}
             required={true}
-            defaultValue=""
           />
 
           {errors.city && errorMessage()}
@@ -183,7 +235,6 @@ const ProfileHomeScreen = ({navigation}) => {
             name="city"
             style={styles.input}
             required={true}
-            defaultValue=""
           />
 
           {errors.state && errorMessage()}
@@ -193,7 +244,6 @@ const ProfileHomeScreen = ({navigation}) => {
             name="state"
             style={styles.input}
             required={true}
-            defaultValue=""
           />
 
           {errors.country && errorMessage()}
@@ -203,17 +253,26 @@ const ProfileHomeScreen = ({navigation}) => {
             name="country"
             style={styles.input}
             required={true}
-            defaultValue=""
           />
 
-          {errors.ktp && errorMessage()}
+          {errors.ktp_no && errorMessage()}
           <CustomTextInput
             label="KTP"
             control={control}
-            name="ktp"
+            name="ktp_no"
             style={styles.input}
             required={true}
-            defaultValue=""
+          />
+
+{errors.note && errorMessage()}
+          <CustomTextInput
+            label="Note"
+            control={control}
+            name="note"
+            style={styles.input}
+            required={false}
+            multiline={true}
+            numberOfLines={4}
           />
 
           {/* onPress={handleSubmit(onSubmit)} */}
@@ -231,7 +290,7 @@ const ProfileHomeScreen = ({navigation}) => {
               left={props => <List.Icon {...props} icon="car" />}
               onPress={() => {
                 // navigation.navigate('CarList');
-                navigation.navigate('CarAdd')
+                navigation.navigate('CarAdd');
               }}
             />
             <List.Item

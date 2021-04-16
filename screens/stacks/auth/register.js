@@ -6,35 +6,66 @@ import {
   KeyboardAvoidingView,
   Image,
   StatusBar,
+  Alert,
 } from 'react-native';
 // import * as firebase from 'firebase';
 
-import { Text, TextInput, Button } from 'react-native-paper';
+import {Text, TextInput, Button} from 'react-native-paper';
+import axios from 'axios';
+import { registerUrl } from '../../../services/api';
 
 const RegisterScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [passwordConfirmation, setPasswordConfirmation] = useState('');
 
   async function register() {
     // setLoading(true);
-    // await firebase
-    // 	.auth()
-    // 	.createUserWithEmailAndPassword(email, password)
-    // 	.catch(function (error) {
-    // 		// Handle Errors here.
-    // 		var errorCode = error.code;
-    // 		var errorMessage = error.message;
-    // 		// ...
-    // 		setLoading(false);
-    // 		alert(errorMessage);
-    // 	});
+    if (email === '' || password === '') {
+      Alert.alert('Data tidak lengkap', 'Semua field harus diisi', [
+        {
+          text: 'OK',
+          onPress: () => {},
+        },
+      ]);
+
+      return;
+    }
+
+    setLoading(true);
+
+    //* post
+    axios
+      .post(registerUrl, {
+        email: email,
+        password: password,
+        password_confirmation: passwordConfirmation,
+        role: 'driver'
+      })
+      .then(response => {
+        setLoading(false);
+
+        if (response.data.status === 'error') {
+          Alert.alert(' ', response.data.message, [
+            {
+              text: 'OK',
+              onPress: () => {},
+            },
+          ]);
+        } else {
+          navigation.replace('Login');
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }
 
   return (
     <KeyboardAvoidingView behavior="height" enabled style={{flex: 1}}>
       <StatusBar style="auto" translucent backgroundColor="#f7f7f7" />
-      <View style={{flex:1}}>
+      <View style={{flex: 1}}>
         <ScrollView
           contentContainerStyle={{
             flexGrow: 1,
@@ -63,11 +94,10 @@ const RegisterScreen = ({navigation}) => {
               backgroundColor: '#fff',
             }}>
             <Text
-              
               style={{
                 alignSelf: 'center',
                 padding: 30,
-                fontWeight:'bold'
+                fontWeight: 'bold',
               }}>
               Register
             </Text>
@@ -94,17 +124,30 @@ const RegisterScreen = ({navigation}) => {
               secureTextEntry={true}
               onChangeText={text => setPassword(text)}
             />
+
+<Text style={{marginTop: 15}}>Password Confirmation</Text>
+            <TextInput
+              containerStyle={{marginTop: 15}}
+              placeholder="Re-Enter your password"
+              value={passwordConfirmation}
+              autoCapitalize="none"
+              autoCompleteType="off"
+              autoCorrect={false}
+              secureTextEntry={true}
+              onChangeText={text => setPasswordConfirmation(text)}
+            />
+
             <Button
-            mode='contained'
-              
+              mode="contained"
               onPress={() => {
                 register();
               }}
               style={{
                 marginTop: 20,
               }}
-              disabled={loading}
-            >{loading ? 'Loading' : 'Create an account'}</Button>
+              disabled={loading}>
+              {loading ? 'Loading' : 'Create an account'}
+            </Button>
 
             <View
               style={{
@@ -121,7 +164,7 @@ const RegisterScreen = ({navigation}) => {
                 <Text
                   style={{
                     marginLeft: 5,
-                    fontWeight:'bold'
+                    fontWeight: 'bold',
                   }}>
                   Login here
                 </Text>
