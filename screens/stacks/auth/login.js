@@ -11,21 +11,57 @@ import {
 // import * as firebase from 'firebase';
 
 import {Text, TextInput, Button} from 'react-native-paper';
-import { loginUrl} from '../../../services/api';
+import {loginUrl} from '../../../services/api';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState('jhondoe1@email.com');
-  const [password, setPassword] = useState('123456');  
+  const [password, setPassword] = useState('123456');
   const [loading, setLoading] = useState(false);
-
 
   const storeData = async value => {
     try {
       await AsyncStorage.setItem('@storage_Key', value);
     } catch (e) {
       // saving error
+    }
+  };
+
+  const onLogin = async () => {
+    setLoading(true)
+    try {
+      let response = await fetch(loginUrl, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
+
+      setLoading(false)
+
+      let json = await response.json();
+
+      if (json.status === 'error') {
+        Alert.alert(' ', json.message, [
+          {
+            text: 'OK',
+            onPress: () => {},
+          },
+        ]);
+      } else {
+        storeData(email);
+        navigation.navigate('Main');
+      }
+
+      // console.log('login:',json);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -44,6 +80,8 @@ const LoginScreen = ({navigation}) => {
     setLoading(true);
 
     //* post
+
+    /*
     axios
       .post(loginUrl, {
         email: email,
@@ -66,24 +104,42 @@ const LoginScreen = ({navigation}) => {
       })
       .catch(error => {
         console.log(error);
-      });
+      });*/
 
-    //* save to local
-
-    //* go to main
-
-    // navigation.navigate('Main');
-    // await firebase
-    // 	.auth()
-    // 	.signInWithEmailAndPassword(email, password)
-    // 	.catch(function (error) {
-    // 		// Handle Errors here.
-    // 		var errorCode = error.code;
-    // 		var errorMessage = error.message;
-    // 		// ...
-    // 		setLoading(false);
-    // 		alert(errorMessage);
-    // 	});
+    await fetch(loginUrl, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        mobile: email,
+        password: password,
+      }),
+    })
+      .then(response => {
+        console.log('login: ', response.json());
+        response.json();
+      })
+      .then(responseJson => {
+        console.log('responseJson:', responseJson);
+        if (responseJson.status === 'error') {
+          Alert.alert(' ', responseJson.message, [
+            {
+              text: 'OK',
+              onPress: () => {},
+            },
+          ]);
+        } else {
+          storeData(email);
+          navigation.navigate('Main');
+        }
+      })
+      .catch(error => {
+        //display error message
+        console.warn(error);
+      })
+      .finally(() => setLoading(false));
   }
 
   return (
@@ -152,7 +208,8 @@ const LoginScreen = ({navigation}) => {
             <Button
               mode="contained"
               onPress={() => {
-                login();
+                // login();
+                onLogin();
               }}
               style={{
                 marginTop: 20,
